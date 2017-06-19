@@ -16,10 +16,9 @@ struct Config {
     data_dir: Option<String>,
 }
 
-fn main() {
-    const CONFIG_PATH: &'static str = "/etc/blochs/";
-    const CONFIG_FILE_NAME: &'static str = "server.toml";
-    const DEFAULT_DATA_DIR: &'static str = "/var/lib/blochs/";
+const CONFIG_PATH: &'static str = "/etc/blochs/";
+const CONFIG_FILE_NAME: &'static str = "server.toml";
+const DEFAULT_DATA_DIR: &'static str = "/var/lib/blochs/";
 
     let options = App::new(env!("CARGO_PKG_NAME"))
         .version(env!("CARGO_PKG_VERSION"))
