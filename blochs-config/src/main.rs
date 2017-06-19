@@ -28,23 +28,23 @@ fn main() {
     ensure_dir_exists(&config_path);
 
     let config_file_path = config_path.join(CONFIG_FILE_NAME);
-
     let actual_content = get_file_content(&config_file_path);
 
     let mut config_values: Config = toml::from_str(&actual_content).unwrap();
-
-    let config_or_default_data_dir = config_values.data_dir.unwrap_or(DEFAULT_DATA_DIR.to_string());
-
-    let new_data_dir = options.value_of("data.dir").unwrap_or(&config_or_default_data_dir);
-
-    config_values.data_dir = Some(new_data_dir.to_string());
+    set_options(&mut config_values, &options);
 
     let new_config_content = toml::to_string(&config_values).unwrap();
-
     match rewrite_file(&config_file_path, &new_config_content) {
         Ok(_) => println!("New config saved at {}:\n\n{}", config_file_path.display(), new_config_content),
         Err(why) => panic!("Could not write config file {:?}: {}", config_file_path.display(), why),
     };
+}
+
+fn set_options(config_values: &mut Config, options: &ArgMatches) {
+    let config_or_default_data_dir = config_values.data_dir.unwrap_or(DEFAULT_DATA_DIR.to_string());
+    let new_data_dir = options.value_of("data.dir").unwrap_or(&config_or_default_data_dir);
+
+    config_values.data_dir = Some(new_data_dir.to_string());
 }
 
 fn rewrite_file(path: &Path, new_content: &String) -> Result<()> {
