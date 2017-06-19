@@ -24,12 +24,7 @@ fn main() {
     let options = get_provided_options();
 
     let config_path = Path::new(CONFIG_PATH);
-    if !config_path.exists() {
-        match create_dir(CONFIG_PATH) {
-            Err(err) => panic!("Could not create the config directory under {}: {}", CONFIG_PATH, err),
-            Ok(_) => {}
-        };
-    }
+    ensure_dir_exists(&config_path);
 
     let config_file_path = config_path.join(CONFIG_FILE_NAME);
     let mut read_config_file = match File::open(config_file_path.as_path()) {
@@ -63,6 +58,15 @@ fn main() {
         Ok(_) => println!("New config saved at {}:\n\n{}", config_file_path.display(), new_config_content),
         Err(why) => panic!("Could not write config file {:?}: {}", config_file_path.display(), why),
     };
+}
+
+fn ensure_dir_exists(path: &Path) {
+    if !path.exists() {
+        match create_dir(path) {
+            Err(err) => panic!("Could not create directory under {}: {}", path.display(), err),
+            Ok(_) => {}
+        };
+    }
 }
 
 fn get_provided_options<'a>() -> ArgMatches<'a> {
