@@ -27,16 +27,8 @@ fn main() {
     ensure_dir_exists(&config_path);
 
     let config_file_path = config_path.join(CONFIG_FILE_NAME);
-    let mut read_config_file = match File::open(config_file_path.as_path()) {
-        Ok(file) => file,
-        Err(err) => panic!("Could not open config file {:?}: {}", config_file_path.display(), err),
-    };
 
-    let mut actual_content = String::new();
-    match read_config_file.read_to_string(&mut actual_content) {
-        Ok(_) => {},
-        Err(err) => panic!("Could not open config file {:?}: {}", config_file_path.display(), err),
-    };
+    let actual_content = get_file_content(&config_file_path);
 
     let mut config_values: Config = toml::from_str(&actual_content).unwrap();
 
@@ -58,6 +50,22 @@ fn main() {
         Ok(_) => println!("New config saved at {}:\n\n{}", config_file_path.display(), new_config_content),
         Err(why) => panic!("Could not write config file {:?}: {}", config_file_path.display(), why),
     };
+}
+
+fn get_file_content(path: &Path) -> String {
+    let mut content = String::new();
+    if path.exists() {
+        let mut file = match File::open(&path) {
+            Ok(file) => file,
+            Err(err) => panic!("Could not open file {:?}: {}", path.display(), err),
+        };
+
+        match file.read_to_string(&mut content) {
+            Ok(_) => {},
+            Err(err) => panic!("Could not read file {:?}: {}", path.display(), err),
+        };
+    }
+    return content;
 }
 
 fn ensure_dir_exists(path: &Path) {
