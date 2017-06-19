@@ -10,6 +10,7 @@ use clap::{App, Arg, ArgMatches};
 use std::path::Path;
 use std::fs::{create_dir, File};
 use std::io::prelude::*;
+use std::io::Result;
 
 #[derive(Serialize, Deserialize)]
 struct Config {
@@ -40,16 +41,19 @@ fn main() {
 
     let new_config_content = toml::to_string(&config_values).unwrap();
 
-
-    let mut write_config_file = match File::create(config_file_path.as_path()) {
-        Ok(file) => file,
-        Err(err) => panic!("Could not open config file {:?}: {}", config_file_path.display(), err),
-    };
-
-    match write_config_file.write_all(new_config_content.as_bytes()) {
+    match rewrite_file(&config_file_path, &new_config_content) {
         Ok(_) => println!("New config saved at {}:\n\n{}", config_file_path.display(), new_config_content),
         Err(why) => panic!("Could not write config file {:?}: {}", config_file_path.display(), why),
     };
+}
+
+fn rewrite_file(path: &Path, new_content: &String) -> Result<()> {
+    let mut file = match File::create(path) {
+        Ok(file) => file,
+        Err(err) => panic!("Could not open config file {:?}: {}", path.display(), err),
+    };
+
+    return file.write_all(new_content.as_bytes());
 }
 
 fn get_file_content(path: &Path) -> String {
