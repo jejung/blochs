@@ -6,7 +6,7 @@ extern crate serde;
 extern crate toml;
 extern crate clap;
 
-use clap::{App, Arg};
+use clap::{App, Arg, ArgMatches};
 use std::path::Path;
 use std::fs::{create_dir, File};
 use std::io::prelude::*;
@@ -20,15 +20,8 @@ const CONFIG_PATH: &'static str = "/etc/blochs/";
 const CONFIG_FILE_NAME: &'static str = "server.toml";
 const DEFAULT_DATA_DIR: &'static str = "/var/lib/blochs/";
 
-    let options = App::new(env!("CARGO_PKG_NAME"))
-        .version(env!("CARGO_PKG_VERSION"))
-        .author(env!("CARGO_PKG_AUTHORS"))
-        .about(env!("CARGO_PKG_DESCRIPTION"))
-        .arg(Arg::with_name("data.dir")
-            .long("data-dir")
-            .value_name("DIR")
-            .help(&format!("Sets where database data will be stored (default {})", DEFAULT_DATA_DIR))
-        ).get_matches();
+fn main() {
+    let options = get_provided_options();
 
     let config_path = Path::new(CONFIG_PATH);
     if !config_path.exists() {
@@ -70,4 +63,16 @@ const DEFAULT_DATA_DIR: &'static str = "/var/lib/blochs/";
         Ok(_) => println!("New config saved at {}:\n\n{}", config_file_path.display(), new_config_content),
         Err(why) => panic!("Could not write config file {:?}: {}", config_file_path.display(), why),
     };
+}
+
+fn get_provided_options<'a>() -> ArgMatches<'a> {
+    return App::new(env!("CARGO_PKG_NAME"))
+        .version(env!("CARGO_PKG_VERSION"))
+        .author(env!("CARGO_PKG_AUTHORS"))
+        .about(env!("CARGO_PKG_DESCRIPTION"))
+        .arg(Arg::with_name("data.dir")
+            .long("data-dir")
+            .value_name("DIR")
+            .help(&format!("Sets where database data will be stored (default {})", DEFAULT_DATA_DIR))
+        ).get_matches();
 }
