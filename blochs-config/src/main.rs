@@ -1,21 +1,13 @@
-#[macro_use]
-extern crate serde_derive;
-
-extern crate serde;
-
 extern crate toml;
 extern crate clap;
+extern crate libblochs;
 
 use clap::{App, Arg, ArgMatches};
 use std::path::Path;
 use std::fs::{create_dir, File};
 use std::io::prelude::*;
 use std::io::Result;
-
-#[derive(Serialize, Deserialize)]
-struct Config {
-    data_dir: Option<String>,
-}
+use libblochs::config::ServerConfig;
 
 const CONFIG_PATH: &'static str = "/etc/blochs/";
 const CONFIG_FILE_NAME: &'static str = "server.toml";
@@ -30,7 +22,7 @@ fn main() {
     let config_file_path = config_path.join(CONFIG_FILE_NAME);
     let actual_content = get_file_content(&config_file_path);
 
-    let mut config_values: Config = toml::from_str(&actual_content).unwrap();
+    let mut config_values: ServerConfig = toml::from_str(&actual_content).unwrap();
     set_options(&mut config_values, &options);
 
     let new_config_content = toml::to_string(&config_values).unwrap();
@@ -40,8 +32,10 @@ fn main() {
     };
 }
 
-fn set_options(config_values: &mut Config, options: &ArgMatches) {
-    let config_or_default_data_dir = config_values.data_dir.unwrap_or(DEFAULT_DATA_DIR.to_string());
+fn set_options(config_values: &mut ServerConfig, options: &ArgMatches) {
+    let config_data_dir = config_values.data_dir.take();
+
+    let config_or_default_data_dir = config_data_dir.unwrap_or(DEFAULT_DATA_DIR.to_string());
     let new_data_dir = options.value_of("data.dir").unwrap_or(&config_or_default_data_dir);
 
     config_values.data_dir = Some(new_data_dir.to_string());
