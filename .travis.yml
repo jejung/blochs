@@ -1,0 +1,13 @@
+language: rust
+
+dist: trusty
+sudo: required
+
+rust:
+  - stable
+  - beta
+  - nightly
+
+script:
+  - cargo build --all
+  - cargo test --all
