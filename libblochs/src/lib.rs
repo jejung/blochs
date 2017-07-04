@@ -54,7 +54,8 @@ pub mod config {
 
     #[derive(Serialize, Deserialize)]
     pub struct ServerConfig {
-        pub data_dir: Option<String>
+        pub data_dir: Option<String>,
+        pub listening_port: Option<u64>,
     }
 
     pub fn load_server_config() -> ServerConfig {
