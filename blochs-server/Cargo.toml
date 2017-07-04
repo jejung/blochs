@@ -1,0 +1,6 @@
+[package]
+name = "blochs-server"
+version = "0.1.0"
+authors = ["Jean Jung <jean.jung@rocketmail.com>"]
+
+[dependencies]
