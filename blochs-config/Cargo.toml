@@ -6,6 +6,5 @@ description = "Blochs database configuration tool"
 
 [dependencies]
 clap = "~2.24.0"
-toml = "~0.4"
 libblochs = { path = "../libblochs" }
 
