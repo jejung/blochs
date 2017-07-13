@@ -12,4 +12,5 @@ script:
   - cargo build --all
   - cargo test --all
 
-cache: rust
+cache:
+  cargo: true
