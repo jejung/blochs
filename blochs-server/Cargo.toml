@@ -4,3 +4,6 @@ version = "0.1.0"
 authors = ["Jean Jung <jean.jung@rocketmail.com>"]
 
 [dependencies]
+libblochs = { path = "../libblochs" }
+log = "0.3.8"
+simple_logger = "0.3.1"
